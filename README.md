@@ -1,5 +1,9 @@
 # DragNDropTable
 
+## Description
+This is an experimental project to learn how drag n drop column re-ordering works in table, along with searching and sorting.
+This project uses [Angular drag n drop cdk](https://material.angular.io/cdk/drag-drop/overview) to handle drag and drop feature.
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.1.3.
 
 ## Development server
