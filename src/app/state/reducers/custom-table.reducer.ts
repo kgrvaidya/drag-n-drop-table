@@ -39,8 +39,8 @@ const tableReducer = createReducer(
         let nextState = payload.columnOrder === 0 ? 1 : payload.columnOrder === 1 ? 2 : 0
         // calculate next state from current state
         return {...state, filter : {
-            columnName : payload.columnName ? payload.columnName : state.filter.columnName, 
-            columnOrder : payload.columnOrder?.toString() ? nextState: state.filter.columnOrder,
+            columnName : payload.columnName !== undefined ? payload.columnName : state.filter.columnName, 
+            columnOrder : payload.columnOrder !== undefined ? nextState: state.filter.columnOrder,
             filterValue : payload.filterValue !== undefined ? payload.filterValue : state.filter.filterValue
         }}
     })

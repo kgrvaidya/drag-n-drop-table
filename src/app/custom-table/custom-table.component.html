@@ -1,41 +1,32 @@
+<div class="custom-container">
+    <div *ngIf="isLoading; then spinner else tableContent"></div>    
+    <ng-template #spinner>Loading</ng-template>
+    <ng-template #tableContent>
+    
+        <div class="table-container">
+            <h1> Welcome to Drag n Drop Table!</h1>
 
-<h2>Test table render using the API data</h2>
-<div *ngIf="isLoading; then spinner else tableContent">here is ignored</div>    
-<ng-template #spinner>Loading</ng-template>
-<ng-template #tableContent>
-    <!-- <mat-form-field class="example-form-field" appearance="fill">
-        <mat-label>Clearable input</mat-label>
-        <input matInput type="text" [(ngModel)]="value">
-        <button *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field> -->
+            <h2>Test data rendered using mock API</h2>
 
-      <!-- <input (keyup)="handleInputChange($event)"> -->
-
-      <input [formControl]="name">
-
-    <table>
-
-        <tr *ngIf="!isLoading" cdkDropList cdkDropListOrientation="horizontal" class="example-list" (cdkDropListDropped)="drop($event)">
-            <th class="example-box" *ngFor="let name of columnList" (click)="onRowClick($event, name)" cdkDrag>
-                <span>{{name}}</span>
-                <i 
-                    [ngClass]="{'fa-arrow-up': filters?.columnName === name && filters?.columnOrder === 1,
-                                'fa-arrow-down': filters?.columnName === name && filters?.columnOrder === 2}" 
-                    class="fa" 
-                    aria-hidden="true"></i> 
-            </th>
-        </tr>
-
-        <tr *ngFor="let row of filteredTableData">
-            <td *ngFor="let name of columnList">{{row[name]}}</td>
-        </tr>
-    </table>
-</ng-template>
-
-
-
-<!-- <div *ngIf="!isLoading" cdkDropList cdkDropListOrientation="horizontal" class="example-list" (cdkDropListDropped)="drop($event)">
-    <div class="example-box" *ngFor="let name of columnList" cdkDrag>{{name}}</div>
-</div> -->
+            <input class="search-field" [formControl]="name" placeholder="Enter a term to search">
+    
+            <table>
+                <tr *ngIf="!isLoading" cdkDropList cdkDropListOrientation="horizontal" class="example-list" (cdkDropListDropped)="drop($event)">
+                    <th class="example-box" *ngFor="let name of columnList" (click)="onRowClick($event, name)" cdkDrag>
+                        <span class="table-header-cell">{{name}}</span>
+                        <i 
+                            [ngClass]="{'fa-arrow-up': filters?.columnName === name && filters?.columnOrder === 1,
+                                        'fa-arrow-down': filters?.columnName === name && filters?.columnOrder === 2}" 
+                            class="fa" 
+                            aria-hidden="true"></i> 
+                    </th>
+                </tr>
+        
+                <tr *ngFor="let row of filteredTableData">
+                    <td *ngFor="let name of columnList">{{row[name]}}</td>
+                </tr>
+            </table>
+        </div>
+    </ng-template>
+    
+</div>
