@@ -1,0 +1,20 @@
+
+<h2>Test table render using the API data</h2>
+<div *ngIf="isLoading; then spinner else tableContent">here is ignored</div>    
+<ng-template #spinner>Loading</ng-template>
+<ng-template #tableContent>
+    <table>
+        <tr>
+            <th *ngFor="let column of columnList">{{column}}</th>
+        </tr>
+        <tr *ngFor="let row of tableData">
+            <td *ngFor="let name of columnList">{{row[name]}}</td>
+        </tr>
+    </table>
+</ng-template>
+
+
+
+<!-- <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" (cdkDropListDropped)="drop($event)">
+    <div class="example-box" *ngFor="let timePeriod of timePeriods" cdkDrag>{{timePeriod}}</div>
+</div> -->
