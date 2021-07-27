@@ -25,6 +25,7 @@ export class CustomTableComponent implements OnInit, OnDestroy {
   value: string = ''
   inputFilterChange =new Subject();
   name = new FormControl('');
+  isEmpty: boolean = false;
 
   /*
     This is how the sorting logic should work. 
@@ -146,6 +147,11 @@ export class CustomTableComponent implements OnInit, OnDestroy {
         }
     } else {
         this.filteredTableData = [...this.tableData]
+    }
+    if(this.filteredTableData.length === 0) {
+      this.isEmpty = true
+    } else {
+      this.isEmpty = false
     }
   }
 

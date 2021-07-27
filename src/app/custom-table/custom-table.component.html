@@ -10,15 +10,17 @@
 
             <input class="search-field" [formControl]="name" placeholder="Enter a term to search">
     
-            <table>
+            <table *ngIf="!isEmpty && !isLoading">
                 <tr *ngIf="!isLoading" cdkDropList cdkDropListOrientation="horizontal" class="example-list" (cdkDropListDropped)="drop($event)">
                     <th class="example-box" *ngFor="let name of columnList" (click)="onRowClick($event, name)" cdkDrag>
-                        <span class="table-header-cell">{{name}}</span>
-                        <i 
-                            [ngClass]="{'fa-arrow-up': filters?.columnName === name && filters?.columnOrder === 1,
-                                        'fa-arrow-down': filters?.columnName === name && filters?.columnOrder === 2}" 
-                            class="fa" 
-                            aria-hidden="true"></i> 
+                        <div>
+                            <span class="table-header-cell">{{name}}</span>
+                            <i 
+                                [ngClass]="{'fa-arrow-up': filters?.columnName === name && filters?.columnOrder === 1,
+                                            'fa-arrow-down': filters?.columnName === name && filters?.columnOrder === 2}" 
+                                class="fa" 
+                                aria-hidden="true"></i> 
+                        </div>
                     </th>
                 </tr>
         
@@ -26,6 +28,7 @@
                     <td *ngFor="let name of columnList">{{row[name]}}</td>
                 </tr>
             </table>
+            <h3 *ngIf="isEmpty && !isLoading"> No record found for the search term!</h3>
         </div>
     </ng-template>
     
