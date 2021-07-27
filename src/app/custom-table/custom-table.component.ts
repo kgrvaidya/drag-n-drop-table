@@ -56,8 +56,8 @@ export class CustomTableComponent implements OnInit, OnDestroy {
   //   'Long nineteenth century'
   // ];
 
-  // drop(event: CdkDragDrop<string[]>) {
-  //   moveItemInArray(this.timePeriods, event.previousIndex, event.currentIndex);
-  // }
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.columnList, event.previousIndex, event.currentIndex);
+  }
 
 }

@@ -4,9 +4,14 @@
 <ng-template #spinner>Loading</ng-template>
 <ng-template #tableContent>
     <table>
-        <tr>
-            <th *ngFor="let column of columnList">{{column}}</th>
-        </tr>
+        <!-- <tr> -->
+            <!-- <th *ngFor="let column of columnList">{{column}}</th> -->
+            <!-- <div > -->
+                <tr *ngIf="!isLoading" cdkDropList cdkDropListOrientation="horizontal" class="example-list" (cdkDropListDropped)="drop($event)">
+                    <th class="example-box" *ngFor="let name of columnList" cdkDrag>{{name}}</th>
+                </tr>
+            <!-- </div> -->
+        <!-- </tr> -->
         <tr *ngFor="let row of tableData">
             <td *ngFor="let name of columnList">{{row[name]}}</td>
         </tr>
@@ -15,6 +20,6 @@
 
 
 
-<!-- <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" (cdkDropListDropped)="drop($event)">
-    <div class="example-box" *ngFor="let timePeriod of timePeriods" cdkDrag>{{timePeriod}}</div>
+<!-- <div *ngIf="!isLoading" cdkDropList cdkDropListOrientation="horizontal" class="example-list" (cdkDropListDropped)="drop($event)">
+    <div class="example-box" *ngFor="let name of columnList" cdkDrag>{{name}}</div>
 </div> -->
