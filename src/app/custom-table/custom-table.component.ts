@@ -38,8 +38,8 @@ export class CustomTableComponent implements OnInit, OnDestroy {
       this.tableData = data.data
       this.isLoading = data.loading
       this.filters = data.filters
+      this.columnList = this.tableData.length > 0  && this.columnList.length !== Object.keys(this.tableData[0]).length ? Object.keys(this.tableData[0]) : this.columnList
       this.applyFilters()
-      this.columnList = this.tableData.length > 0 ? Object.keys(this.tableData[0]) : []
     });
 
   }
@@ -51,6 +51,7 @@ export class CustomTableComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next(true)
     this.destroy$.unsubscribe();
+    // send an action to clear sorting and filter values
   }
 
   onRowClick (event: any, name: string): void {
