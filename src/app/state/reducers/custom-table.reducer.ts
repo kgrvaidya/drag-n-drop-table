@@ -7,8 +7,9 @@ export enum sortingConst {
     desc = 2
 }
 export interface Filter {
-    columnName : string,
-    columnOrder: sortingConst
+    columnName? : string,
+    columnOrder?: sortingConst,
+    filterValue? : string
 }
 
 export interface State {
@@ -37,7 +38,11 @@ const tableReducer = createReducer(
     on(TableAction.setDataFilter, (state, payload) => {
         let nextState = payload.columnOrder === 0 ? 1 : payload.columnOrder === 1 ? 2 : 0
         // calculate next state from current state
-        return {...state, filter : {columnName : payload.columnName, columnOrder : nextState}}
+        return {...state, filter : {
+            columnName : payload.columnName ? payload.columnName : state.filter.columnName, 
+            columnOrder : payload.columnOrder?.toString() ? nextState: state.filter.columnOrder,
+            filterValue : payload.filterValue !== undefined ? payload.filterValue : state.filter.filterValue
+        }}
     })
 )
 

@@ -6,6 +6,8 @@ import * as fromRoot from '../state';
 import { Subject,Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Filter, sortingConst as sorting } from '../state/reducers/custom-table.reducer';
+import { FormControl } from '@angular/forms';
+
 
 @Component({
   selector: 'custom-table',
@@ -19,7 +21,10 @@ export class CustomTableComponent implements OnInit, OnDestroy {
   filteredTableData:any[] = [];
   filters: Filter = {columnName : "", columnOrder : 0};
   isLoading: boolean = false;
-  columnList: any[] = []
+  columnList: any[] = [];
+  value: string = ''
+  inputFilterChange =new Subject();
+  name = new FormControl('');
 
   /*
     This is how the sorting logic should work. 
@@ -34,7 +39,7 @@ export class CustomTableComponent implements OnInit, OnDestroy {
     this.store.select(fromRoot.getTableInfo).pipe(
       takeUntil(this.destroy$)
     ).subscribe(data => {
-      console.log('data::::', data);
+      // console.log('data::::', data);
       this.tableData = data.data
       this.isLoading = data.loading
       this.filters = data.filters
@@ -42,16 +47,17 @@ export class CustomTableComponent implements OnInit, OnDestroy {
       this.applyFilters()
     });
 
+    this.name.valueChanges.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(val => {
+      // console.log(val)
+      this.store.dispatch(tableActions.setDataFilter({filterValue : val}));
+    })
+
   }
 
   ngOnInit(): void {
     this.store.dispatch(tableActions.getData());
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next(true)
-    this.destroy$.unsubscribe();
-    // send an action to clear sorting and filter values
   }
 
   onRowClick (event: any, name: string): void {
@@ -61,8 +67,37 @@ export class CustomTableComponent implements OnInit, OnDestroy {
 
   applyFilters () {
     // take filter, use that filter to filterout values from the list. keep this value in a local array called filteredList
-    const {columnName = "", columnOrder = 0} = this.filters
-    if(columnName && columnOrder) {
+    // first filter out values based on filterValue and later sort them. 
+    const {columnName = "", columnOrder = 0, filterValue=''} = this.filters
+    if(columnName.length > 0 && columnOrder.toString() || filterValue) {
+
+      let someData = []
+      if(filterValue.length > 0) {
+        // filter value exists, filter values based on this. 
+        // note that, this can be matched with any of the parameter of the table, excluding the header.
+
+        // filter all the values, check for any of the column in the object has a match.
+        let columns = Object.keys(this.tableData[0])
+        someData = this.tableData.filter(item => {
+          let flag = false;
+          if(columns && columns.length > 0) {
+            columns.forEach(column => {
+              if(item[column].toString().toLowerCase().indexOf(filterValue.toLowerCase()) > -1) {
+                flag = true;
+                return;
+              }
+              return false
+            })
+            if(flag) {
+              return true
+            }
+          }
+          return false
+        })
+        this.filteredTableData = [...someData]
+
+      }
+
         if(columnName.length > 0) {
           // columname exists. For that name apply the filter based on the columnOrder
           // based on the value in order, return the sorted list.
@@ -106,12 +141,11 @@ export class CustomTableComponent implements OnInit, OnDestroy {
             })
             this.filteredTableData = [...this.filteredTableData]
           } else {
-            this.filteredTableData = [...this.tableData]
+            this.filteredTableData = someData.length > 0 ? [...someData] : [...this.tableData]
           }
         }
-    }
-    else {
-      this.filteredTableData = [...this.tableData]
+    } else {
+        this.filteredTableData = [...this.tableData]
     }
   }
 
@@ -119,8 +153,12 @@ export class CustomTableComponent implements OnInit, OnDestroy {
     moveItemInArray(this.columnList, event.previousIndex, event.currentIndex);
   }
 
-  handleSort(a:any, b:any, order: sorting): number {
-    return 0
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true)
+    this.destroy$.unsubscribe();
+    this.store.dispatch(tableActions.setDataFilter({columnName:'', columnOrder:0, filterValue : ''}));
+    // send an action to clear sorting and filter values
   }
 
 }

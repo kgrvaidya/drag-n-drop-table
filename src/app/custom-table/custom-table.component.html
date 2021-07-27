@@ -3,22 +3,31 @@
 <div *ngIf="isLoading; then spinner else tableContent">here is ignored</div>    
 <ng-template #spinner>Loading</ng-template>
 <ng-template #tableContent>
+    <!-- <mat-form-field class="example-form-field" appearance="fill">
+        <mat-label>Clearable input</mat-label>
+        <input matInput type="text" [(ngModel)]="value">
+        <button *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field> -->
+
+      <!-- <input (keyup)="handleInputChange($event)"> -->
+
+      <input [formControl]="name">
+
     <table>
-        <!-- <tr> -->
-            <!-- <th *ngFor="let column of columnList">{{column}}</th> -->
-            <!-- <div > -->
-                <tr *ngIf="!isLoading" cdkDropList cdkDropListOrientation="horizontal" class="example-list" (cdkDropListDropped)="drop($event)">
-                    <th class="example-box" *ngFor="let name of columnList" (click)="onRowClick($event, name)" cdkDrag>
-                        <span>{{name}}</span>
-                        <i 
-                            [ngClass]="{'fa-arrow-up': filters?.columnName === name && filters?.columnOrder === 1,
-                                        'fa-arrow-down': filters?.columnName === name && filters?.columnOrder === 2}" 
-                            class="fa" 
-                            aria-hidden="true"></i> 
-                    </th>
-                </tr>
-            <!-- </div> -->
-        <!-- </tr> -->
+
+        <tr *ngIf="!isLoading" cdkDropList cdkDropListOrientation="horizontal" class="example-list" (cdkDropListDropped)="drop($event)">
+            <th class="example-box" *ngFor="let name of columnList" (click)="onRowClick($event, name)" cdkDrag>
+                <span>{{name}}</span>
+                <i 
+                    [ngClass]="{'fa-arrow-up': filters?.columnName === name && filters?.columnOrder === 1,
+                                'fa-arrow-down': filters?.columnName === name && filters?.columnOrder === 2}" 
+                    class="fa" 
+                    aria-hidden="true"></i> 
+            </th>
+        </tr>
+
         <tr *ngFor="let row of filteredTableData">
             <td *ngFor="let name of columnList">{{row[name]}}</td>
         </tr>
