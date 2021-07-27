@@ -8,11 +8,18 @@
             <!-- <th *ngFor="let column of columnList">{{column}}</th> -->
             <!-- <div > -->
                 <tr *ngIf="!isLoading" cdkDropList cdkDropListOrientation="horizontal" class="example-list" (cdkDropListDropped)="drop($event)">
-                    <th class="example-box" *ngFor="let name of columnList" cdkDrag>{{name}}</th>
+                    <th class="example-box" *ngFor="let name of columnList" (click)="onRowClick($event, name)" cdkDrag>
+                        <span>{{name}}</span>
+                        <i 
+                            [ngClass]="{'fa-arrow-up': filters?.columnName === name && filters?.columnOrder === 1,
+                                        'fa-arrow-down': filters?.columnName === name && filters?.columnOrder === 2}" 
+                            class="fa" 
+                            aria-hidden="true"></i> 
+                    </th>
                 </tr>
             <!-- </div> -->
         <!-- </tr> -->
-        <tr *ngFor="let row of tableData">
+        <tr *ngFor="let row of filteredTableData">
             <td *ngFor="let name of columnList">{{row[name]}}</td>
         </tr>
     </table>
