@@ -1,11 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import { Store } from '@ngrx/store';
-import * as tableActions from '../state/actions/custom-table.action';
-import * as fromRoot from '../state';
+// import * as tableActions from '../../../state/actions/custom-table.action';
+// import * as fromRoot from '../../../state';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { Filter, sortingConst as sorting } from '../state/reducers/custom-table.reducer';
+// import { takeUntil } from 'rxjs/operators';
+import { Filter, sortingConst as sorting } from '../../../state/reducers/custom-table.reducer';
 import { FormControl } from '@angular/forms';
 
 
@@ -14,24 +14,26 @@ import { FormControl } from '@angular/forms';
   templateUrl: './custom-table.component.html',
   styleUrls: ['./custom-table.component.scss']
 })
-export class CustomTableComponent implements OnInit, OnDestroy {
-
+export class CustomTableComponent implements OnInit, OnDestroy, OnChanges {
+  // updating the component, making all the local inputs as input coming from parent component
   destroy$: Subject<boolean> = new Subject<boolean>();
-  tableData:any[] = [];
-  filteredTableData:any[] = [];
-  filters: Filter = {columnName : "", columnOrder : 0};
-  isLoading: boolean = false;
+  
+  @Input() tableData:any[] = [];
+  @Input() filters: Filter = {columnName : "", columnOrder : 0, filterValue: ''};
+  @Input() isLoading: boolean = true;
+  @Input() name = new FormControl('');
+  @Input() totalCount: number = 0;
+  @Input() pageSize: number = 9;
+
   columnList: any[] = [];
-  value: string = ''
-  inputFilterChange =new Subject();
-  name = new FormControl('');
+  filteredTableData:any[] = [];
   isEmpty: boolean = false;
-  totalCount: number = 0;
-  pageSize: number = 9;
   numberOfPages: number = 0;
   currentPage: number = 1;
   pagesList: number[] = [] // this will hold the current set of pages, not more than 10 at a time. 
   paginatedData: any[] = []
+
+  @Output() onRowClickHandler = new EventEmitter()
 
   /*
     This is how the sorting logic should work. 
@@ -43,43 +45,54 @@ export class CustomTableComponent implements OnInit, OnDestroy {
 
   constructor(private readonly store: Store) { 
 
-    this.store.select(fromRoot.getTableInfo).pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(data => {
+    // this.store.select(fromRoot.getTableInfo).pipe(
+    //   takeUntil(this.destroy$)
+    // ).subscribe(data => {
       // console.log('data::::', data);
-      this.tableData = data.data
+      // this.tableData = data.data
       // set pagination detail as soon as page loads
-      this.totalCount = this.tableData.length
+      // this.totalCount = this.tableData.length
       // number of pages cant be fraction. If fraction, add 1
-      let fraction:number = this.totalCount / this.pageSize
+      
+    // });
+
+    // this.name.valueChanges.pipe(
+    //   takeUntil(this.destroy$)
+    // ).subscribe(val => {
+    //   // console.log(val)
+    //   this.store.dispatch(tableActions.setDataFilter({filterValue : val}));
+    // })
+
+  }
+
+  initializeTable = () => {
+    let fraction:number = this.totalCount / this.pageSize
       if(fraction - parseInt(fraction.toString()) > 0) {
         fraction = parseInt(fraction.toString()) + 1;
       }
       this.numberOfPages = fraction; //this.totalCount / this.pageSize
 
-      this.isLoading = data.loading
-      this.filters = data.filters
+      // this.isLoading = data.loading
+      // this.filters = data.filters
       this.columnList = this.tableData.length > 0  && this.columnList.length !== Object.keys(this.tableData[0]).length ? Object.keys(this.tableData[0]) : this.columnList
       this.createPageList()
-      // this.applyFilters()
-    });
+      this.applyFilters()
+  }
 
-    this.name.valueChanges.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(val => {
-      // console.log(val)
-      this.store.dispatch(tableActions.setDataFilter({filterValue : val}));
-    })
-
+  ngOnChanges() {
+    // initialize the component
+    this.initializeTable()
   }
 
   ngOnInit(): void {
-    this.store.dispatch(tableActions.getData());
+    // this.store.dispatch(tableActions.getData());
   }
 
   onRowClick (event: any, name: string): void {
     const order = this.filters?.columnName === name ? this.filters.columnOrder : 0
-    this.store.dispatch(tableActions.setDataFilter({columnName : name, columnOrder : order}));
+    // this.store.dispatch(tableActions.setDataFilter({columnName : name, columnOrder : order}));
+    this.onRowClickHandler.emit({columnName : name, columnOrder : order})
+
   }
 
   applyFilters () {
@@ -249,9 +262,9 @@ export class CustomTableComponent implements OnInit, OnDestroy {
 
 
   ngOnDestroy(): void {
-    this.destroy$.next(true)
-    this.destroy$.unsubscribe();
-    this.store.dispatch(tableActions.setDataFilter({columnName:'', columnOrder:0, filterValue : ''}));
+    // this.destroy$.next(true)
+    // this.destroy$.unsubscribe();
+    // this.store.dispatch(tableActions.setDataFilter({columnName:'', columnOrder:0, filterValue : ''}));
     // send an action to clear sorting and filter values
   }
 

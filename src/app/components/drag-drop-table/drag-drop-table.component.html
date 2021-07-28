@@ -1,0 +1,10 @@
+<input class="search-field" [formControl]="name" placeholder="Enter a term to search">
+
+<custom-table
+    [tableData]="tableData"
+    [filters]="filters"
+    [totalCount]="totalCount"
+    [pageSize]="pageSize"
+    [isLoading] = "isLoading"
+    (onRowClickHandler)="onRowClick($event)"
+></custom-table>
