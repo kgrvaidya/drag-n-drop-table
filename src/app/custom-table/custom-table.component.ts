@@ -27,7 +27,7 @@ export class CustomTableComponent implements OnInit, OnDestroy {
   name = new FormControl('');
   isEmpty: boolean = false;
   totalCount: number = 0;
-  pageSize: number = 10;
+  pageSize: number = 9;
   numberOfPages: number = 0;
   currentPage: number = 1;
   pagesList: number[] = [] // this will hold the current set of pages, not more than 10 at a time. 
@@ -50,7 +50,12 @@ export class CustomTableComponent implements OnInit, OnDestroy {
       this.tableData = data.data
       // set pagination detail as soon as page loads
       this.totalCount = this.tableData.length
-      this.numberOfPages = this.totalCount / this.pageSize
+      // number of pages cant be fraction. If fraction, add 1
+      let fraction:number = this.totalCount / this.pageSize
+      if(fraction - parseInt(fraction.toString()) > 0) {
+        fraction = parseInt(fraction.toString()) + 1;
+      }
+      this.numberOfPages = fraction; //this.totalCount / this.pageSize
 
       this.isLoading = data.loading
       this.filters = data.filters

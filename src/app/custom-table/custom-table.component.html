@@ -32,85 +32,21 @@
                     </tr>
                 </tbody>
             </table>
+            
+            <h3 *ngIf="isEmpty && !isLoading"> No record found for the search term!</h3>
+
             <div class="pagination-container">
                 <div class="pagination-number">Showing {{currentPage}} of {{numberOfPages}} pages</div>
                 <div class="pagination-action">
-                    <div (click)="previousPage()"><i class="fas fa-step-backward"></i></div> <!-- previous page-->
-                    <div *ngFor="let page of pagesList"> 
-                        <span [ngClass]="{active: currentPage === page}" class="page-number" (click)="goToPage(page)">{{page}}</span> 
+                    <div *ngIf="currentPage !== 1" class="action-button" (click)="previousPage()"><i class="fas fa-step-backward"></i></div> <!-- previous page-->
+                    <div *ngFor="let page of pagesList" [ngClass]="{active: currentPage === page}" class="page-number"> 
+                        <span (click)="goToPage(page)">{{page}}</span> 
                     </div>
-                    <div (click)="nextPage()"><i class="fas fa-step-forward"></i></div> <!-- last page-->
+                    <div *ngIf="currentPage !== numberOfPages" class="action-button" (click)="nextPage()"><i class="fas fa-step-forward"></i></div> <!-- last page-->
                 </div>
             </div>
-            <h3 *ngIf="isEmpty && !isLoading"> No record found for the search term!</h3>
         </div>
         
-    </ng-template>
-
-
-
-
-    <!-- <table ResizeColumn class="table">
-        <thead>
-            <tr>
-                <th>No.</th>
-                <th>First name</th>
-                <th>Last name</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>Andrea</td>
-                <td>Ross</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Penelope</td>
-                <td>Mills</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Sarah</td>
-                <td>Grant</td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>Vanessa</td>
-                <td>Roberts</td>
-            </tr>
-            <tr>
-                <td>5</td>
-                <td>Oliver</td>
-                <td>Alsop</td>
-            </tr>
-            <tr>
-                <td>6</td>
-                <td>Jennifer</td>
-                <td>Forsyth</td>
-            </tr>
-            <tr>
-                <td>7</td>
-                <td>Michelle</td>
-                <td>King</td>
-            </tr>
-            <tr>
-                <td>8</td>
-                <td>Steven</td>
-                <td>Kelly</td>
-            </tr>
-            <tr>
-                <td>9</td>
-                <td>Julian</td>
-                <td>Ferguson</td>
-            </tr>
-            <tr>
-                <td>10</td>
-                <td>Chloe</td>
-                <td>Ince</td>
-            </tr>
-        </tbody>
-    </table> -->
-    
+    </ng-template>    
     
 </div>
