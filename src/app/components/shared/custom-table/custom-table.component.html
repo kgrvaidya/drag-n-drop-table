@@ -32,7 +32,7 @@
             
             <h3 *ngIf="isEmpty && !isLoading"> No record found for the search term!</h3>
 
-            <div class="pagination-container">
+            <div class="pagination-container" *ngIf="pagination">
                 <div class="pagination-number">Showing {{currentPage}} of {{numberOfPages}} pages</div>
                 <div class="pagination-action">
                     <div *ngIf="currentPage !== 1" class="action-button" (click)="previousPage()"><i class="fas fa-step-backward"></i></div> <!-- previous page-->

@@ -1,10 +1,7 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import { Store } from '@ngrx/store';
-// import * as tableActions from '../../../state/actions/custom-table.action';
-// import * as fromRoot from '../../../state';
 import { Subject } from 'rxjs';
-// import { takeUntil } from 'rxjs/operators';
 import { Filter, sortingConst as sorting } from '../../../state/reducers/custom-table.reducer';
 import { FormControl } from '@angular/forms';
 
@@ -15,7 +12,6 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['./custom-table.component.scss']
 })
 export class CustomTableComponent implements OnInit, OnDestroy, OnChanges {
-  // updating the component, making all the local inputs as input coming from parent component
   destroy$: Subject<boolean> = new Subject<boolean>();
   
   @Input() tableData:any[] = [];
@@ -24,6 +20,7 @@ export class CustomTableComponent implements OnInit, OnDestroy, OnChanges {
   @Input() name = new FormControl('');
   @Input() totalCount: number = 0;
   @Input() pageSize: number = 9;
+  @Input() pagination:boolean = true;
 
   columnList: any[] = [];
   filteredTableData:any[] = [];
@@ -44,25 +41,6 @@ export class CustomTableComponent implements OnInit, OnDestroy, OnChanges {
 
 
   constructor(private readonly store: Store) { 
-
-    // this.store.select(fromRoot.getTableInfo).pipe(
-    //   takeUntil(this.destroy$)
-    // ).subscribe(data => {
-      // console.log('data::::', data);
-      // this.tableData = data.data
-      // set pagination detail as soon as page loads
-      // this.totalCount = this.tableData.length
-      // number of pages cant be fraction. If fraction, add 1
-      
-    // });
-
-    // this.name.valueChanges.pipe(
-    //   takeUntil(this.destroy$)
-    // ).subscribe(val => {
-    //   // console.log(val)
-    //   this.store.dispatch(tableActions.setDataFilter({filterValue : val}));
-    // })
-
   }
 
   initializeTable = () => {
@@ -70,17 +48,19 @@ export class CustomTableComponent implements OnInit, OnDestroy, OnChanges {
       if(fraction - parseInt(fraction.toString()) > 0) {
         fraction = parseInt(fraction.toString()) + 1;
       }
-      this.numberOfPages = fraction; //this.totalCount / this.pageSize
+      this.numberOfPages = fraction; 
 
-      // this.isLoading = data.loading
-      // this.filters = data.filters
       this.columnList = this.tableData.length > 0  && this.columnList.length !== Object.keys(this.tableData[0]).length ? Object.keys(this.tableData[0]) : this.columnList
-      this.createPageList()
+      if(this.pagination) {
+        this.createPageList()
+      }
+      else {
+        this.paginatedData = [...this.tableData]
+      }
       this.applyFilters()
   }
 
   ngOnChanges() {
-    // initialize the component
     this.initializeTable()
   }
 
@@ -98,13 +78,17 @@ export class CustomTableComponent implements OnInit, OnDestroy, OnChanges {
   applyFilters () {
     // take filter, use that filter to filterout values from the list. keep this value in a local array called filteredList
     // first filter out values based on filterValue and later sort them. 
-    const {columnName = "", columnOrder = 0, filterValue=''} = this.filters
+    const {columnName = "", columnOrder = 0, filterValue=undefined} = this.filters
     if(columnName.length > 0 && columnOrder.toString() || filterValue) {
 
       let someData = []
-      if(filterValue.length > 0) {
+      if(filterValue !== undefined) {
+        // if pagination is not there, make paginationResult to default array and then filter.
         // filter value exists, filter values based on this. 
         // note that, this can be matched with any of the parameter of the table, excluding the header.
+        if(!this.pagination) {
+          this.paginatedData = [...this.tableData]
+        }
 
         // filter all the values, check for any of the column in the object has a match.
         let columns = Object.keys(this.paginatedData[0])
@@ -128,52 +112,52 @@ export class CustomTableComponent implements OnInit, OnDestroy, OnChanges {
 
       }
 
-        if(columnName.length > 0) {
-          // columname exists. For that name apply the filter based on the columnOrder
-          // based on the value in order, return the sorted list.
-          if(columnOrder === sorting.asc) {
-            this.filteredTableData.sort((a,b) => {
-              // return this.handleSort(a,b,sorting.asc)
-              let valA = a[columnName]
-              let valB = b[columnName]
-              if(columnName === "id") {
-                valA = parseInt(valA)
-                valB = parseInt(valB)
-              }
-              if(valA > valB) {
-                return 1
-              }
-              else if ( valA < valB) {
-                return -1
-              }
-              else return 0
-            })
-            this.filteredTableData = [...this.filteredTableData]
-            
-          }
-          else if (columnOrder === sorting.desc) {
-            this.filteredTableData.sort((a,b) => {
-              // if columnName === "id", compare with integer value, not string
-              let valA = a[columnName]
-              let valB = b[columnName]
-              if(columnName === "id") {
-                valA = parseInt(valA)
-                valB = parseInt(valB)
-              }
-              if(valA < valB) {
-                return 1
-              }
-              else if ( valA > valB) {
-                return -1
-              }
-              else return 0
-            })
-            this.filteredTableData = [...this.filteredTableData]
-          } else {
-            // assign tabledata to filteredTableData, if there's no filterValue. Else apply it to somedata only.
-            this.filteredTableData = filterValue.length > 0 ? [...someData] : [...this.paginatedData]
-          }
+      if(columnName.length > 0) {
+        // columname exists. For that name apply the filter based on the columnOrder
+        // based on the value in order, return the sorted list.
+        if(columnOrder === sorting.asc) {
+          this.filteredTableData.sort((a,b) => {
+            // return this.handleSort(a,b,sorting.asc)
+            let valA = a[columnName]
+            let valB = b[columnName]
+            if(columnName === "id") {
+              valA = parseInt(valA)
+              valB = parseInt(valB)
+            }
+            if(valA > valB) {
+              return 1
+            }
+            else if ( valA < valB) {
+              return -1
+            }
+            else return 0
+          })
+          this.filteredTableData = [...this.filteredTableData]
+          
         }
+        else if (columnOrder === sorting.desc) {
+          this.filteredTableData.sort((a,b) => {
+            // if columnName === "id", compare with integer value, not string
+            let valA = a[columnName]
+            let valB = b[columnName]
+            if(columnName === "id") {
+              valA = parseInt(valA)
+              valB = parseInt(valB)
+            }
+            if(valA < valB) {
+              return 1
+            }
+            else if ( valA > valB) {
+              return -1
+            }
+            else return 0
+          })
+          this.filteredTableData = [...this.filteredTableData]
+        } else {
+          // assign tabledata to filteredTableData, if there's no filterValue. Else apply it to somedata only.
+          this.filteredTableData = filterValue && filterValue.length > 0 ? [...someData] : [...this.paginatedData]
+        }
+      }
     } else {
         this.filteredTableData = [...this.paginatedData]
     }
@@ -254,7 +238,7 @@ export class CustomTableComponent implements OnInit, OnDestroy, OnChanges {
     */
     if(this.tableData.length > 0) {
       this.paginatedData = this.tableData.slice((this.currentPage -1 ) * this.pageSize, (this.currentPage -1 ) * this.pageSize + this.pageSize)
-      console.log(this.paginatedData)
+      // console.log(this.paginatedData)
       this.filteredTableData = [...this.paginatedData]
       this.applyFilters()
     }
