@@ -20,7 +20,6 @@
         border: none;
         border-bottom: solid 1px #ccc;
         outline: none;
-        // outline-style : 1px solid green;
         margin-bottom: 5px;
         border-radius: 5px;
         background: transparent;
@@ -44,7 +43,7 @@
         }
 
         th {
-            cursor: grab !important;
+            cursor: grab;
         }
 
         .table-header-cell {
@@ -68,3 +67,38 @@
                 0 8px 10px 1px rgba(0, 0, 0, 0.14),
                 0 3px 14px 2px rgba(0, 0, 0, 0.12);
   }
+
+
+
+
+
+.table {
+    border-collapse: collapse;
+}
+.table, .table th, .table td {
+    border: 1px solid #ccc;
+}
+.table th, .table td {
+    padding: 0.5rem;
+}
+.table th {
+    position: relative;
+}
+.resizer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 5px;
+    cursor: col-resize !important;
+    user-select: none;
+}
+.resizer:hover, .resizing {
+    border-right: 2px solid blue;
+}
+
+.resizable {  
+    border: 1px solid gray;
+    height: 100px;
+    width: 100px;
+    position: relative;
+}

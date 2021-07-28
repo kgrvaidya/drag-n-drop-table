@@ -12,12 +12,14 @@ import { StoreModule } from '@ngrx/store';
 import { reducers } from './state';
 import { CustomTableEffects } from './state/effects/custom-table.effetcs';
 import { EffectsModule } from '@ngrx/effects';
+import { ResizeColumnDirective } from './directives/resize-column.directive';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    CustomTableComponent
+    CustomTableComponent,
+    ResizeColumnDirective
   ],
   imports: [
     BrowserModule,

@@ -3,7 +3,7 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import { Store } from '@ngrx/store';
 import * as tableActions from '../state/actions/custom-table.action';
 import * as fromRoot from '../state';
-import { Subject,Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Filter, sortingConst as sorting } from '../state/reducers/custom-table.reducer';
 import { FormControl } from '@angular/forms';
@@ -29,7 +29,7 @@ export class CustomTableComponent implements OnInit, OnDestroy {
 
   /*
     This is how the sorting logic should work. 
-    There will be one columnName and one columnOrder values in state. On click, this needs to get updated
+    There will be one columnName and one columnOrder, filterValue values in state. On click, this needs to get updated
     in ngOnInit, subscribe for data change, and once we get data, get filters along with that and apply them on UI and render the result.
 
   */
@@ -124,7 +124,6 @@ export class CustomTableComponent implements OnInit, OnDestroy {
           }
           else if (columnOrder === sorting.desc) {
             this.filteredTableData.sort((a,b) => {
-              // return this.handleSort(a,b,sorting.desc)
               // if columnName === "id", compare with integer value, not string
               let valA = a[columnName]
               let valB = b[columnName]
@@ -142,7 +141,8 @@ export class CustomTableComponent implements OnInit, OnDestroy {
             })
             this.filteredTableData = [...this.filteredTableData]
           } else {
-            this.filteredTableData = someData.length > 0 ? [...someData] : [...this.tableData]
+            // assign tabledata to filteredTableData, if there's no filterValue. Else apply it to somedata only.
+            this.filteredTableData = filterValue.length > 0 ? [...someData] : [...this.tableData]
           }
         }
     } else {
