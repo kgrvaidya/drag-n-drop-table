@@ -1,6 +1,6 @@
 <div class="custom-container">
     <div *ngIf="isLoading; then spinner else tableContent"></div>    
-    <ng-template #spinner>Loading</ng-template>
+    <ng-template #spinner>Loading...</ng-template>
     <ng-template #tableContent>
     
         <div class="table-container">
@@ -36,8 +36,8 @@
                 <div class="pagination-number">Showing {{currentPage}} of {{numberOfPages}} pages</div>
                 <div class="pagination-action">
                     <div *ngIf="currentPage !== 1" class="action-button" (click)="previousPage()"><i class="fas fa-step-backward"></i></div> <!-- previous page-->
-                    <div *ngFor="let page of pagesList" [ngClass]="{active: currentPage === page}" class="page-number"> 
-                        <span (click)="goToPage(page)">{{page}}</span> 
+                    <div *ngFor="let page of pagesList" [ngClass]="{active: currentPage === page}" class="page-number" (click)="goToPage(page)"> 
+                        {{page}}
                     </div>
                     <div *ngIf="currentPage !== numberOfPages" class="action-button" (click)="nextPage()"><i class="fas fa-step-forward"></i></div> <!-- last page-->
                 </div>

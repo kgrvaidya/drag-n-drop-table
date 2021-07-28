@@ -23,7 +23,7 @@ export class DragDropTableComponent implements OnInit, OnDestroy {
   name = new FormControl('');
   // isEmpty: boolean = false;
   totalCount: number = 0;
-  pageSize: number = 9;
+  pageSize: number = 10;
   numberOfPages: number = 0;
   currentPage: number = 1;
   pagesList: number[] = [] // this will hold the current set of pages, not more than 10 at a time. 

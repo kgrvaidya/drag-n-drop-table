@@ -1,6 +1,5 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
-import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { Filter, sortingConst as sorting } from '../../../state/reducers/custom-table.reducer';
 import { FormControl } from '@angular/forms';
@@ -11,7 +10,7 @@ import { FormControl } from '@angular/forms';
   templateUrl: './custom-table.component.html',
   styleUrls: ['./custom-table.component.scss']
 })
-export class CustomTableComponent implements OnInit, OnDestroy, OnChanges {
+export class CustomTableComponent implements OnChanges {
   destroy$: Subject<boolean> = new Subject<boolean>();
   
   @Input() tableData:any[] = [];
@@ -19,7 +18,7 @@ export class CustomTableComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isLoading: boolean = true;
   @Input() name = new FormControl('');
   @Input() totalCount: number = 0;
-  @Input() pageSize: number = 9;
+  @Input() pageSize: number = 10;
   @Input() pagination:boolean = true;
 
   columnList: any[] = [];
@@ -35,12 +34,10 @@ export class CustomTableComponent implements OnInit, OnDestroy, OnChanges {
   /*
     This is how the sorting logic should work. 
     There will be one columnName and one columnOrder, filterValue values in state. On click, this needs to get updated
-    in ngOnInit, subscribe for data change, and once we get data, get filters along with that and apply them on UI and render the result.
-
   */
 
 
-  constructor(private readonly store: Store) { 
+  constructor() { 
   }
 
   initializeTable = () => {
@@ -64,13 +61,8 @@ export class CustomTableComponent implements OnInit, OnDestroy, OnChanges {
     this.initializeTable()
   }
 
-  ngOnInit(): void {
-    // this.store.dispatch(tableActions.getData());
-  }
-
   onRowClick (event: any, name: string): void {
     const order = this.filters?.columnName === name ? this.filters.columnOrder : 0
-    // this.store.dispatch(tableActions.setDataFilter({columnName : name, columnOrder : order}));
     this.onRowClickHandler.emit({columnName : name, columnOrder : order})
 
   }
@@ -117,7 +109,6 @@ export class CustomTableComponent implements OnInit, OnDestroy, OnChanges {
         // based on the value in order, return the sorted list.
         if(columnOrder === sorting.asc) {
           this.filteredTableData.sort((a,b) => {
-            // return this.handleSort(a,b,sorting.asc)
             let valA = a[columnName]
             let valB = b[columnName]
             if(columnName === "id") {
@@ -176,6 +167,9 @@ export class CustomTableComponent implements OnInit, OnDestroy, OnChanges {
 
     Will go with this flow, 
     First, make the pagination work, then take care of other things.
+
+    UPDATE - 
+    Pagination works well with filters
   */
 
   nextPage() {
@@ -242,14 +236,6 @@ export class CustomTableComponent implements OnInit, OnDestroy, OnChanges {
       this.filteredTableData = [...this.paginatedData]
       this.applyFilters()
     }
-  }
-
-
-  ngOnDestroy(): void {
-    // this.destroy$.next(true)
-    // this.destroy$.unsubscribe();
-    // this.store.dispatch(tableActions.setDataFilter({columnName:'', columnOrder:0, filterValue : ''}));
-    // send an action to clear sorting and filter values
   }
 
 }
