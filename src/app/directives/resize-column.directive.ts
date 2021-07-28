@@ -11,7 +11,7 @@ export class ResizeColumnDirective implements AfterViewInit{
     const cols:any[] = this.el.nativeElement.querySelectorAll('th');
     console.log(cols)
 
-    const tableHeight = `${this.el.nativeElement.offsetHeight}px`;
+    const tableHeight = `${this.el.nativeElement.querySelector('th').offsetHeight}px`; //    '15px'; //`${this.el.nativeElement.offsetHeight}px`;
 
     cols.forEach((col:any) => {
       const resizer = document.createElement('div');

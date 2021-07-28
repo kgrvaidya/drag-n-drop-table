@@ -1,0 +1,49 @@
+<div class="custom-container">
+    <div *ngIf="isLoading; then spinner else tableContent"></div>    
+    <ng-template #spinner>Loading...</ng-template>
+    <ng-template #tableContent>
+    
+        <div class="table-container">
+
+            <!-- <input class="search-field" [formControl]="name" placeholder="Enter a term to search"> -->
+    
+            <table class="table" ResizeColumn *ngIf="!isEmpty && !isLoading">
+                <thead>
+                    <tr *ngIf="!isLoading" class="example-list" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)" > 
+                        <th *ngFor="let name of columnList" (click)="onRowClick($event, name)" cdkDrag>
+                            <div>
+                                <span class="table-header-cell">{{name}}</span>
+                                <i 
+                                [ngClass]="{'fa-arrow-up': filters?.columnName === name && filters?.columnOrder === 1,
+                                            'fa-arrow-down': filters?.columnName === name && filters?.columnOrder === 2}" 
+                                class="fa" 
+                                aria-hidden="true"></i> 
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+        
+                <tbody>
+                    <tr *ngFor="let row of filteredTableData">
+                        <td *ngFor="let name of columnList">{{row[name]}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3 *ngIf="isEmpty && !isLoading"> No record found for the search term!</h3>
+
+            <div class="pagination-container" *ngIf="pagination">
+                <div class="pagination-number">Showing {{currentPage}} of {{numberOfPages}} pages</div>
+                <div class="pagination-action">
+                    <div *ngIf="currentPage !== 1" class="action-button" (click)="previousPage()"><i class="fas fa-step-backward"></i></div> <!-- previous page-->
+                    <div *ngFor="let page of pagesList" [ngClass]="{active: currentPage === page}" class="page-number" (click)="goToPage(page)"> 
+                        {{page}}
+                    </div>
+                    <div *ngIf="currentPage !== numberOfPages" class="action-button" (click)="nextPage()"><i class="fas fa-step-forward"></i></div> <!-- last page-->
+                </div>
+            </div>
+        </div>
+        
+    </ng-template>    
+    
+</div>

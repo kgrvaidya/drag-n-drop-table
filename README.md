@@ -1,4 +1,4 @@
-# DragNDropTable
+# Drag N Drop Table with sorting and pagination
 
 ## Description
 This is an experimental project to learn how drag n drop column re-ordering works in table, along with searching and sorting.

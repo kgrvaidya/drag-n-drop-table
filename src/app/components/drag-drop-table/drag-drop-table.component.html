@@ -1,0 +1,18 @@
+<div class="table-container">
+    <h1> Welcome to Drag n Drop Table!</h1>
+
+    <h2>Test data rendered using mock API</h2>
+
+<input *ngIf="!isLoading" class="search-field" [formControl]="name" placeholder="Enter a term to search">
+
+<custom-table
+    [tableData]="tableData"
+    [filters]="filters"
+    [totalCount]="totalCount"
+    [pageSize]="pageSize"
+    [isLoading] = "isLoading"
+    (onRowClickHandler)="onRowClick($event)"
+    [pagination]="true"
+></custom-table>
+
+</div>
