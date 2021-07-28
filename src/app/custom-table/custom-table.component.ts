@@ -26,6 +26,12 @@ export class CustomTableComponent implements OnInit, OnDestroy {
   inputFilterChange =new Subject();
   name = new FormControl('');
   isEmpty: boolean = false;
+  totalCount: number = 0;
+  pageSize: number = 10;
+  numberOfPages: number = 0;
+  currentPage: number = 1;
+  pagesList: number[] = [] // this will hold the current set of pages, not more than 10 at a time. 
+  paginatedData: any[] = []
 
   /*
     This is how the sorting logic should work. 
@@ -42,10 +48,15 @@ export class CustomTableComponent implements OnInit, OnDestroy {
     ).subscribe(data => {
       // console.log('data::::', data);
       this.tableData = data.data
+      // set pagination detail as soon as page loads
+      this.totalCount = this.tableData.length
+      this.numberOfPages = this.totalCount / this.pageSize
+
       this.isLoading = data.loading
       this.filters = data.filters
       this.columnList = this.tableData.length > 0  && this.columnList.length !== Object.keys(this.tableData[0]).length ? Object.keys(this.tableData[0]) : this.columnList
-      this.applyFilters()
+      this.createPageList()
+      // this.applyFilters()
     });
 
     this.name.valueChanges.pipe(
@@ -78,8 +89,8 @@ export class CustomTableComponent implements OnInit, OnDestroy {
         // note that, this can be matched with any of the parameter of the table, excluding the header.
 
         // filter all the values, check for any of the column in the object has a match.
-        let columns = Object.keys(this.tableData[0])
-        someData = this.tableData.filter(item => {
+        let columns = Object.keys(this.paginatedData[0])
+        someData = this.paginatedData.filter(item => {
           let flag = false;
           if(columns && columns.length > 0) {
             columns.forEach(column => {
@@ -142,11 +153,11 @@ export class CustomTableComponent implements OnInit, OnDestroy {
             this.filteredTableData = [...this.filteredTableData]
           } else {
             // assign tabledata to filteredTableData, if there's no filterValue. Else apply it to somedata only.
-            this.filteredTableData = filterValue.length > 0 ? [...someData] : [...this.tableData]
+            this.filteredTableData = filterValue.length > 0 ? [...someData] : [...this.paginatedData]
           }
         }
     } else {
-        this.filteredTableData = [...this.tableData]
+        this.filteredTableData = [...this.paginatedData]
     }
     if(this.filteredTableData.length === 0) {
       this.isEmpty = true
@@ -155,8 +166,80 @@ export class CustomTableComponent implements OnInit, OnDestroy {
     }
   }
 
+  /*
+    Few scenarios for pagination.
+    1. If the sorting and searching is in place, should we support pagination for that?
+    2. On click of paginate, should the filter be cleared?
+    3. Should the result have filter pre applied before showing on screen?
+
+    Will go with this flow, 
+    First, make the pagination work, then take care of other things.
+  */
+
+  nextPage() {
+    if(this.currentPage > 0 && this.numberOfPages > this.currentPage) {
+      this.currentPage+=1;
+      this.createPageList()
+    }
+  }
+
+  previousPage() {
+    if(this.currentPage > 1 && this.currentPage <= this.numberOfPages ) {
+      this.currentPage-=1;
+      this.createPageList();
+    }
+  }
+
+  goToPage(pageNumber: number) {
+    this.currentPage = pageNumber
+    this.getSubArray()
+  }
+
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.columnList, event.previousIndex, event.currentIndex);
+  }
+
+  createPageList = () => {
+    let pagesSet = []
+    // generate pageList to show for pagination
+    if(this.numberOfPages >=this.pageSize) {
+      if(this.numberOfPages - this.currentPage >=this.pageSize) {
+        // if the current page has atleast 10 more pages
+        for(let i=this.currentPage; i<this.currentPage+this.pageSize; i++) {
+          pagesSet.push(i)
+        }
+      }
+      else {
+        // current page is 9, total pages are 15, hence pagelist will hold 6 to 15
+        for(let i = this.numberOfPages - this.pageSize +1; i<=this.numberOfPages; i++) {
+          pagesSet.push(i)
+        }
+        
+      }
+    } else {
+      // there's not more than 10 pages left. If only 1 page, just add that and disable the previous next options
+      for(let i=1; i <=this.numberOfPages; i++) {
+        pagesSet.push(i)
+      }
+    }
+
+    this.pagesList = [...pagesSet]
+    this.getSubArray()
+  }
+
+  getSubArray = () => {
+    // current page, and page size and 
+
+    /*
+      if current page is 2 and if the pagesize is 20,
+      then data will be from index 2*20 + 20 -> currentPage * pageSize + pageSize
+    */
+    if(this.tableData.length > 0) {
+      this.paginatedData = this.tableData.slice((this.currentPage -1 ) * this.pageSize, (this.currentPage -1 ) * this.pageSize + this.pageSize)
+      console.log(this.paginatedData)
+      this.filteredTableData = [...this.paginatedData]
+      this.applyFilters()
+    }
   }
 
 

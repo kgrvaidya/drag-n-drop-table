@@ -32,8 +32,19 @@
                     </tr>
                 </tbody>
             </table>
+            <div class="pagination-container">
+                <div class="pagination-number">Showing {{currentPage}} of {{numberOfPages}} pages</div>
+                <div class="pagination-action">
+                    <div (click)="previousPage()"><i class="fas fa-step-backward"></i></div> <!-- previous page-->
+                    <div *ngFor="let page of pagesList"> 
+                        <span [ngClass]="{active: currentPage === page}" class="page-number" (click)="goToPage(page)">{{page}}</span> 
+                    </div>
+                    <div (click)="nextPage()"><i class="fas fa-step-forward"></i></div> <!-- last page-->
+                </div>
+            </div>
             <h3 *ngIf="isEmpty && !isLoading"> No record found for the search term!</h3>
         </div>
+        
     </ng-template>
 
 

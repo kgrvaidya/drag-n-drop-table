@@ -102,3 +102,24 @@
     width: 100px;
     position: relative;
 }
+
+.pagination-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .pagination-action {
+        display: flex;
+    }
+
+    .page-number {
+        padding: 5px;
+        border-radius: 5px;
+        margin: 0 2px;
+    }
+    .active {
+        background: black;
+        color: white;
+    }
+}
